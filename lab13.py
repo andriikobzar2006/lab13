@@ -50,3 +50,63 @@ def convert_csv_to_json(csv_file, json_file):
 write_csv_file(csv_filename, students_data)
 convert_csv_to_json(csv_filename, json_filename)
 
+#Сема
+import csv
+import json
+import os
+
+json_filename = "students.json"
+csv_updated_filename = "students_updated.csv"
+
+# Нові дані, які потрібно додати
+new_students_data = [
+    {"id": 4, "name": "Олександр", "grade": 88},
+    {"id": 5, "name": "Світлана", "grade": 92}
+]
+
+def read_json_file(filename):
+    """Читає дані з JSON файлу."""
+    try:
+        with open(filename, mode="r", encoding="utf-8") as file:
+            data = json.load(file)
+        print(f"Дані успішно прочитані з '{filename}'.")
+        return data
+    except FileNotFoundError:
+        print(f"Файл '{filename}' не знайдено.")
+        return []
+    except json.JSONDecodeError:
+        print(f"Помилка при читанні JSON з '{filename}'.")
+        return []
+    except Exception as e:
+        print(f"Інша помилка: {e}")
+        return []
+
+def write_csv_file(filename, data):
+    """Записує дані у CSV файл."""
+    try:
+        with open(filename, mode="w", encoding="utf-8", newline="") as file:
+            fieldnames = ["id", "name", "grade"]
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in data:
+                writer.writerow(row)
+        print(f"CSV файл '{filename}' успішно створено.")
+    except Exception as e:
+        print(f"Помилка при записі у CSV: {e}")
+
+def update_csv_with_new_data(json_file, csv_file, new_data):
+    """Читає дані з JSON та записує їх у CSV з додаванням нових рядків."""
+    existing_data = read_json_file(json_file)
+    if not existing_data:
+        print("Дані не знайдено, оновлення CSV не виконано.")
+        return
+
+    # Додаємо нові дані до наявних
+    updated_data = existing_data + new_data
+
+    # Записуємо оновлені дані у CSV
+    write_csv_file(csv_file, updated_data)
+
+# Виконуємо переписування та оновлення даних
+update_csv_with_new_data(json_filename, csv_updated_filename, new_students_data)
+
